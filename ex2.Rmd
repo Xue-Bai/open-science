@@ -1,0 +1,95 @@
+---
+title: "ex2"
+output:
+  pdf_document: default
+  html_document: default
+date: "2023-11-12"
+csl: "the- american-naturalist.csl"
+bibliography: mabiblio.bib
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+### Question 1
+
+This is **bold text**.
+
+### Question 2
+
+```{r echo = FALSE, eval = FALSE}
+# Load the tidyverse packages and suppress all messages
+library(palmerpenguins)
+library(tidyverse)
+library(dplyr)
+library(devtools)
+library(magrittr)
+library(knitr)
+
+# Load the palmerpenguins dataset
+data(package = "palmerpenguins")
+```
+
+### Question 3
+
+```{r}
+#penguins %>% head(10) %>% knitr::kable(format = "html", caption = "penguins")
+penguins %>% 
+slice(1:10) %>% # Slice as the verb say is to cut a tibble in piece, another of sub-setting
+knitr::kable() # Remember kable is the function that helps you to display table. It is built in in knitr
+```
+
+### Question 4
+
+```{r}
+num_individuals <- nrow(penguins)
+num_species <- length(unique(penguins$species))
+num_islands <- length(unique(penguins$island))
+
+cat("In the dataset, we have", num_individuals, "individual penguins, belonging to", 
+    num_species, "different penguin species, and located on", num_islands, "different islands.")
+```
+
+Mean traits:
+
+```{r}
+numeric_traits <- penguins[, sapply(penguins, is.numeric)]
+mean_traits <- colMeans(numeric_traits, na.rm = TRUE)
+
+# Print the mean of numeric traits
+mean_traits
+```
+
+# Calculate Mean of Numeric Traits for Each Penguin Species
+
+To calculate the mean of numeric traits for each penguin species, you can use the following R code:
+
+```{r calculate_mean_by_species}
+# Calculate mean for numeric traits by species
+mean_traits_by_species <- penguins %>%
+  group_by(species) %>%
+  summarise(across(where(is.numeric), mean, na.rm = TRUE))
+
+# Display the table
+kable(mean_traits_by_species, format = "markdown")
+```
+
+### Question 5 Graphical exploration
+
+```{r}
+# Load the ggplot2 package if not already loaded
+library(ggplot2)
+
+penguins %>%
+ggplot() +
+aes(x = body_mass_g) + 
+geom_histogram(aes(fill = species), 
+alpha = 0.5, 
+position = "identity") +
+scale_fill_manual(values = c("darkorange","purple","cyan4")) +
+theme_minimal() +
+labs(x = "Body mass (g)",
+y = "Frequency",
+title = "Penguin body mass")
+```
